@@ -7,7 +7,8 @@
 
 #################################################
 # Interfacing with powersupply (PSU)            
-import serial as ps                       
+from typing import Collection
+import serial                       
 
 # Timeing intervals
 import time
@@ -40,6 +41,63 @@ baud = 109200
 
 # Port for the device (default)
 port = 'COM1'
+
+
+
+# Instantiate a workbook object for storing data
+wb = Workbook()
+
+# Creating a sheet in the workbook
+test_data = wb.create_sheet("Test Data")
+
+# Records the test data in an Excel spreadsheet
+def record_test(test_no, test_data, result):
+
+    # Start in the first column
+    col = 1
+    
+    # Write test number
+    test_data.cell(column=col, row=test_no).value = test_no
+    
+    # Next column
+    col += 1
+
+    # Write test result    
+    test_data.cell(column=col, row=test_no).value = result
+
+    # Next column
+    col +=1 
+
+    # Write test data
+    test_data.cell(column=col, row=test_no).value = test_data
+
+    wb.save("SD_TEST_DATA.xlsx")
+
+    return
+
+# Assess the result of a test
+def assert_test(test_no, test_data):
+
+    # TODO
+    """
+        Need to write logic for when:
+            - Fail and Pass occurs
+        
+        This is dependent on testing.
+    """
+
+    # TODO
+    fail_occurs = None
+    pass_occurs = None
+
+
+    if fail_occurs:
+        result = 'FAIL'
+    elif pass_occurs:
+        result = 'PASS'
+
+    record_test(test_no, test_data, result)
+
 
 # Instaniating the serial interface safely
 with serial.Serial() as dev:

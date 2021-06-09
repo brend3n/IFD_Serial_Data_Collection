@@ -6,8 +6,7 @@
 
 
 #################################################
-# Interfacing with powersupply (PSU)            
-from typing import Collection
+# Interfacing with powersupply (PSU)
 import serial                       
 
 # Timeing intervals
@@ -50,6 +49,32 @@ wb = Workbook()
 # Creating a sheet in the workbook
 test_data = wb.create_sheet("Test Data")
 
+
+# Initializes the workbook for data storage
+def init_wb():
+
+    # Start in the first column
+    col = 1
+    
+    # Write test number
+    test_data.cell(column=col, row=1).value = 'test_no'
+    
+    # Next column
+    col += 1
+
+    # Write test result    
+    test_data.cell(column=col, row=1).value = 'result'
+
+    # Next column
+    col +=1 
+
+    # Write test data
+    test_data.cell(column=col, row=1).value = 'test_data'
+
+    wb.save("SD_TEST_DATA.xlsx")
+
+    return
+
 # Records the test data in an Excel spreadsheet
 def record_test(test_no, test_data, result):
 
@@ -57,19 +82,19 @@ def record_test(test_no, test_data, result):
     col = 1
     
     # Write test number
-    test_data.cell(column=col, row=test_no).value = test_no
+    test_data.cell(column=col, row=(test_no + 1)).value = test_no
     
     # Next column
     col += 1
 
     # Write test result    
-    test_data.cell(column=col, row=test_no).value = result
+    test_data.cell(column=col, row=(test_no + 1)).value = result
 
     # Next column
     col +=1 
 
     # Write test data
-    test_data.cell(column=col, row=test_no).value = test_data
+    test_data.cell(column=col, row=(test_no + 1)).value = test_data
 
     wb.save("SD_TEST_DATA.xlsx")
 
@@ -154,3 +179,5 @@ with serial.Serial() as dev:
         # delay amount of time
         time.sleep(delay)
         print("End of delay")
+
+init_wb()

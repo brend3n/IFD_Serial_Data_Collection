@@ -1,4 +1,4 @@
-# IFD_Serial_Data_Collection
+# Serial_Data_Collection
 
 
 ### Author: Brenden Morton

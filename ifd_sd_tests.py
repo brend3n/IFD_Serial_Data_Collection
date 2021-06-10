@@ -38,7 +38,7 @@ delay = min_delay
 baud = 109200
 
 # Port for the device (default)
-# port = 'COM1'
+port = 'COM1'
 
 # Date
 current_date = date.today()

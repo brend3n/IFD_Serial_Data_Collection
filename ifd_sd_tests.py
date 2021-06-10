@@ -53,7 +53,6 @@ wb = Workbook()
 # Creating a sheet in the workbook
 test_data = wb.create_sheet(f"Test Data ({current_date})")
 
-
 # Initializes the workbook for data storage
 def init_wb():
 
@@ -75,6 +74,7 @@ def init_wb():
     # Write test data
     test_data.cell(column=col, row=1).value = 'test_data'
 
+    # wb.remove("sheet")
     wb.save("SD_TEST_DATA.xlsx")
 
     return
@@ -100,6 +100,7 @@ def record_test(test_no, test_data, result):
     # Write test data
     test_data.cell(column=col, row=(test_no + 1)).value = test_data
 
+    # Saving the workbook
     wb.save("SD_TEST_DATA.xlsx")
 
     return
@@ -119,13 +120,10 @@ def assert_test(test_no, test_data):
         This can be used to determine whether or not a failure has occured
         In order to figure this out, we need to test the device
     """
-
     # TODO
-
 
     fail_occurs = None
     pass_occurs = None
-
 
     if fail_occurs:
         result = 'FAIL'
@@ -133,7 +131,6 @@ def assert_test(test_no, test_data):
         result = 'PASS'
 
     record_test(test_no, test_data, result)
-
 
 def run():
 
@@ -223,8 +220,4 @@ def loop():
         run_2(port) 
         time.sleep(1)
 
-
-
-
-
-
+init_wb()

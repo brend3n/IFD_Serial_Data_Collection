@@ -4,7 +4,6 @@
     Description: Test code for validating SD cards data corruption protection.
 '''
 
-
 #################################################
 # Interfacing with powersupply (PSU)
 import serial                       
@@ -16,10 +15,10 @@ import time
 from openpyxl import Workbook
 
 # File system/directories
-import os   
+import os  
 
-# Writing output to an excel file for analysis
-import excel_writer
+# Obtaining current date when a test begins
+from datetime import date
 ##################################################
 
 
@@ -39,7 +38,12 @@ delay = min_delay
 baud = 109200
 
 # Port for the device (default)
-port = 'COM1'
+# port = 'COM1'
+
+# Date
+current_date = date.today()
+
+
 
 
 
@@ -47,7 +51,7 @@ port = 'COM1'
 wb = Workbook()
 
 # Creating a sheet in the workbook
-test_data = wb.create_sheet("Test Data")
+test_data = wb.create_sheet(f"Test Data ({current_date})")
 
 
 # Initializes the workbook for data storage
@@ -109,9 +113,16 @@ def assert_test(test_no, test_data):
             - Fail and Pass occurs
         
         This is dependent on testing.
+
+
+        Cody said that he used another serial port to read the data of the device
+        This can be used to determine whether or not a failure has occured
+        In order to figure this out, we need to test the device
     """
 
     # TODO
+
+
     fail_occurs = None
     pass_occurs = None
 
@@ -124,60 +135,96 @@ def assert_test(test_no, test_data):
     record_test(test_no, test_data, result)
 
 
-# Instaniating the serial interface safely
-with serial.Serial() as dev:
+def run():
 
-    ''' Initializing the device '''
+    init_wb()
 
-    # Setting baud
-    dev.baudrate = baud
+    # Instaniating the serial interface safely
+    with serial.Serial() as dev:
 
-    # Claiming port
-    dev.port = port
+        ''' Initializing the device '''
 
-    # Opening the connection to the device
-    dev.open()
+        # Setting baud
+        dev.baudrate = baud
 
-    '''
-        To write to the device:
+        # Claiming port
+        dev.port = port
 
-            dev.write()
+        # Opening the connection to the device
+        dev.open()
 
-    '''
-
-    res = input("Select one of the following:\n1. Default\n2. Custom\n")
-
-    if res == '2':
-        num_iterations = int(input("Number of iterations: "))
-        delay = int(input("Delay (in seconds): "))
-    else:
-        print("Default mode")
-
-
-    for i in range(num_iterations):
-        # do something with pyserial (ps)
-        # turn on
-        print("turn on")
-        pass
-
-        # delay amount of time
-        time.sleep(delay)
-        print("End of delay")
-
-        # do something with pyserial
-        # turn off
-        print("turn off")
-        pass
-
-
-        # TODO
         '''
-        Need to figure out what a failure looks like in the
-        automation process for logging
-        '''
-        # Not sure if this will be used
-        # delay amount of time
-        time.sleep(delay)
-        print("End of delay")
+            To write to the device:
 
-init_wb()
+                dev.write()
+
+        '''
+
+        res = input("Select one of the following:\n1. Default\n2. Custom\n")
+
+        if res == '2':
+            num_iterations = int(input("Number of iterations: "))
+            delay = int(input("Delay (in seconds): "))
+        else:
+            print("Default mode")
+
+        
+        for i in range(num_iterations):
+            # do something with pyserial (ps)
+            # turn on
+            print("turn on")
+            pass
+
+            # delay amount of time
+            time.sleep(delay)
+            print("End of delay")
+
+            # do something with pyserial
+            # turn off
+            print("turn off")
+            pass
+
+
+            # TODO
+            '''
+            Need to figure out what a failure looks like in the
+            automation process for logging
+            '''
+            # Not sure if this will be used
+            # delay amount of time
+            time.sleep(delay)
+            print("End of delay")
+
+
+def run_2(port):
+    with serial.Serial() as dev:
+
+        # Claiming port
+        dev.port = port
+        # print(f"PORT {port}")
+
+        for i in range(5):
+            print("Turning on")
+
+            # Opening the connection to the device
+            dev.open()
+        
+            time.sleep(5)
+
+            print("Turning off")
+            dev.close()
+            time.sleep(5)
+
+# Loop to find the port
+def loop():
+    for i in range(1,100):
+        port = f"COM{i}"
+        print(f"PORT {i}")
+        run_2(port) 
+        time.sleep(1)
+
+
+
+
+
+

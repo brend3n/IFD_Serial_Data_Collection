@@ -6,13 +6,15 @@
 
 #################################################
 # Interfacing with powersupply (PSU)
-import serial                       
+import serial
+
+# Interfacing with the IFD over CAN bus
+#import can
 
 # Timeing intervals
 import time
 
 # Writing data to excel spreadsheet
-
 from openpyxl import Workbook
 
 # File system/directories
@@ -40,10 +42,6 @@ baud = 109200
 
 # Port for the device (default)
 port = 'COM1'
-
-# State
-psu_state = False
-
 
 # Date
 current_date = date.today()
@@ -133,7 +131,6 @@ def assert_test(test_no, test_data):
 
     record_test(test_no, test_data, result)
 
-
 def run():
 
     init_wb()
@@ -141,7 +138,7 @@ def run():
     # Instaniating the serial interface safely
     with serial.Serial() as dev:
 
-        # Initializing the device
+        ''' Initializing the device '''
 
         # Setting baud
         dev.baudrate = baud
@@ -152,12 +149,12 @@ def run():
         # Opening the connection to the device
         dev.open()
 
-        
-        # To write to the device:
+        '''
+            To write to the device:
 
-        #  dev.write()
+                dev.write()
 
-        
+        '''
 
         res = input("Select one of the following:\n1. Default\n2. Custom\n")
 
@@ -195,7 +192,6 @@ def run():
             print("End of delay")
 
 
-
 def run_2(port):
     print(f"Inside run_2: {port}.\nTypeof: {type(port)}")
     with serial.Serial() as dev:
@@ -227,7 +223,7 @@ def loop():
         port = f"COM{i}"
         print(f"COM {i}")
         run_2(port) 
-        time.sleep()
+        time.sleep(3)
 
 def test():
     dev = serial.Serial()
@@ -237,20 +233,12 @@ def test():
     time.sleep(10)
     dev.close()
 
+
+# Works for testing
 def ps_fun_time(time_delay):
 
-    # ps = serial.Serial(
-    #     port='COM4',
-    #     baudrate=9600,
-    #     parity=serial.PARITY_NONE,
-    #     stopbits=serial.STOPBITS_ONE,
-    #     bytesize=serial.EIGHTBITS,
-    #     rtscts=True,
-    #     timeout=0
-    # )
-
     ps = serial.Serial(
-        port='/dev/ttyUSB1',
+        port='COM3',
         baudrate=9600,
         parity=serial.PARITY_NONE,
         stopbits=serial.STOPBITS_ONE,
@@ -263,13 +251,10 @@ def ps_fun_time(time_delay):
 
         try:
             ps.open()
-            # toggle_power(ps)
             print("Port opened!")
         except:
-            print("Could not open port -> Exception thrown\nClosing port.")
+            print("Could not open port -> Exception thrown")
             ps.close()
-            # toggle_power(ps)
-            # ps.open()
         
         for i in range(time_delay):
             print(i)
@@ -279,4 +264,75 @@ def ps_fun_time(time_delay):
     time.sleep(5)
     ps.close()
 
-ps_fun_time(15)
+# ps_fun_time(15)
+
+def input_mode():
+    start = time.time()
+    # state = True
+    ps = serial.Serial(
+        port='COM3',
+        baudrate=9600,
+        parity=serial.PARITY_NONE,
+        stopbits=serial.STOPBITS_ONE,
+        bytesize=serial.EIGHTBITS,
+        rtscts=True,
+        timeout=0
+    )
+    ps.close()
+
+    ifd = serial.Serial(
+        port='COM4',
+        baudrate=9600,
+        parity=serial.PARITY_NONE,
+        stopbits=serial.STOPBITS_ONE,
+        bytesize=serial.EIGHTBITS,
+        rtscts=True,
+        timeout=0
+    )
+
+
+
+    while True:
+        print(f"\n~Enter~\n[1] Turn on\n[2] Turn off\n[3] To end program")
+        res = input()
+        res = int(res)
+
+        if res == 1:
+            try:
+                ps.open()
+                print("Turning on")
+                
+            except Exception as e:
+                print(f"Exception: {e}")
+                pass
+            # os.system("clear")
+
+        elif res == 2:
+            try:
+                ps.close()
+                print("Turning off")
+            except Exception as e:
+                print(f"Exception: {e}")
+                pass
+            # os.system("clear")
+        else:
+            print("Ending program")
+            return
+
+
+def can_test(delay):
+    can.rc['interface'] = 'serial'
+    can.rc['channel'] = '/dev/ttyUSB0'
+    can.rc['bitrate'] = 9600
+
+    from can.interface import Bus
+
+    bus = Bus()
+
+    
+
+
+
+# ps_fun_time(15)
+# can_test(15)
+input_mode()

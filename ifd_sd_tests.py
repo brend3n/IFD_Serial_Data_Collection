@@ -235,17 +235,17 @@ def test():
 
 
 # Works for testing
-def ps_fun_time(time_delay):
+def power_cycle(ps, time_delay):
 
-    ps = serial.Serial(
-        port='COM3',
-        baudrate=9600,
-        parity=serial.PARITY_NONE,
-        stopbits=serial.STOPBITS_ONE,
-        bytesize=serial.EIGHTBITS,
-        rtscts=True,
-        timeout=0
-    )
+    # ps = serial.Serial(
+    #     port='COM3',
+    #     baudrate=9600,
+    #     parity=serial.PARITY_NONE,
+    #     stopbits=serial.STOPBITS_ONE,
+    #     bytesize=serial.EIGHTBITS,
+    #     rtscts=True,
+    #     timeout=0
+    # )
 
     while True:
 
@@ -259,12 +259,6 @@ def ps_fun_time(time_delay):
         for i in range(time_delay):
             print(i)
             time.sleep(1)
-
-    ps.open()
-    time.sleep(5)
-    ps.close()
-
-# ps_fun_time(15)
 
 def input_mode():
     start = time.time()
@@ -293,7 +287,7 @@ def input_mode():
 
 
     while True:
-        print(f"\n~Enter~\n[1] Turn on\n[2] Turn off\n[3] To end program")
+        print(f"\n~Enter~\n[1] Turn on\n[2] Turn off\n[3] Power Cycle\n[4] To end program")
         res = input()
         res = int(res)
 
@@ -315,6 +309,10 @@ def input_mode():
                 print(f"Exception: {e}")
                 pass
             # os.system("clear")
+        elif res == 3:
+            print("Power cycle")
+            delay = int(input("Enter delay in seconds: "))
+            power_cycle(ps, delay)
         else:
             print("Ending program")
             return

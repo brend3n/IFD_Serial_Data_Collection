@@ -41,7 +41,7 @@ delay = min_delay
 baud = 109200
 
 # Port for the device (default)
-port = 'COM1'
+# port = 'COM1'
 
 # Date
 current_date = date.today()
@@ -104,149 +104,47 @@ def record_test(test_no, test_data, result):
 
     return
 
-# Assess the result of a test
-def assert_test(test_no, test_data):
 
-    # TODO
-    """
-        Need to write logic for when:
-            - Fail and Pass occurs
-        
-        This is dependent on testing.
+# TODO: Determine whether or not a fail occurs
+# Returns: True if Pass and False if Fail
+def parse_test(file_ref):
+
+    # Assume pass
+    res = True
+
+    # TODO: Find fail
+
+    return res, test_data
 
 
-        Cody said that he used another serial port to read the data of the device
-        This can be used to determine whether or not a failure has occured
-        In order to figure this out, we need to test the device
-    """
-    # TODO
+# Parse and evaluate the result of a test
+def assert_test(test_no, file):
 
-    fail_occurs = None
-    pass_occurs = None
+    # TODO: Parse test
+    # !
 
-    if fail_occurs:
+    result, test_data = parse_test(file)
+
+    if result:
         result = 'FAIL'
-    elif pass_occurs:
+    elif not result:
         result = 'PASS'
 
     record_test(test_no, test_data, result)
 
-def run():
-
-    init_wb()
-
-    # Instaniating the serial interface safely
-    with serial.Serial() as dev:
-
-        ''' Initializing the device '''
-
-        # Setting baud
-        dev.baudrate = baud
-
-        # Claiming port
-        dev.port = port
-
-        # Opening the connection to the device
-        dev.open()
-
-        '''
-            To write to the device:
-
-                dev.write()
-
-        '''
-
-        res = input("Select one of the following:\n1. Default\n2. Custom\n")
-
-        if res == '2':
-            num_iterations = int(input("Number of iterations: "))
-            delay = int(input("Delay (in seconds): "))
-        else:
-            print("Default mode")
-
-        
-        for i in range(num_iterations):
-            # do something with pyserial (ps)
-            # turn on
-            print("turn on")
-            pass
-
-            # delay amount of time
-            time.sleep(delay)
-            print("End of delay")
-
-            # do something with pyserial
-            # turn off
-            print("turn off")
-            pass
-
-
-            # TODO
-            '''
-            Need to figure out what a failure looks like in the
-            automation process for logging
-            '''
-            # Not sure if this will be used
-            # delay amount of time
-            time.sleep(delay)
-            print("End of delay")
-
-
-def run_2(port):
-    print(f"Inside run_2: {port}.\nTypeof: {type(port)}")
-    with serial.Serial() as dev:
-
-        dev.baudrate = 9600
-        # Claiming port
-        dev.port = port
-        
-        # print(f"PORT {port}")
-
-        for i in range(100):
-            print("Turning on")
-
-            # Opening the connection to the device
-            try:
-                dev.open()
-            except Exception as e:
-                print(f"Error: {e}")
-                return        
-            time.sleep(5)
-
-            print("Turning off")
-            dev.close()
-            time.sleep(5)
 
 # Loop to find the port
 def loop():
     for i in range(1,100):
         port = f"COM{i}"
         print(f"COM {i}")
-        run_2(port) 
+        # run_2(port) 
         time.sleep(3)
-
-def test():
-    dev = serial.Serial()
-    dev.port = ""
-    dev.baudrate = 9600
-    dev.open()
-    time.sleep(10)
-    dev.close()
-
 
 # Works for testing
 def power_cycle(ps, time_delay):
-
-    # ps = serial.Serial(
-    #     port='COM3',
-    #     baudrate=9600,
-    #     parity=serial.PARITY_NONE,
-    #     stopbits=serial.STOPBITS_ONE,
-    #     bytesize=serial.EIGHTBITS,
-    #     rtscts=True,
-    #     timeout=0
-    # )
-
+    init_wb()
+    iteration = 0
     while True:
 
         try:
@@ -259,10 +157,15 @@ def power_cycle(ps, time_delay):
         for i in range(time_delay):
             print(i)
             time.sleep(1)
+        
 
-def input_mode():
-    start = time.time()
-    # state = True
+        
+        assert_test(iteration, file)
+        iteration += 1
+
+def run_test():
+
+    # Initiate the connection to the port for Power Supply    
     ps = serial.Serial(
         port='COM3',
         baudrate=9600,
@@ -272,8 +175,10 @@ def input_mode():
         rtscts=True,
         timeout=0
     )
+    # PSU is initially OFF
     ps.close()
 
+    # Initiate the connection to the port of the IFD
     ifd = serial.Serial(
         port='COM4',
         baudrate=9600,
@@ -284,53 +189,49 @@ def input_mode():
         timeout=0
     )
 
-
-
     while True:
         print(f"\n~Enter~\n[1] Turn on\n[2] Turn off\n[3] Power Cycle\n[4] To end program")
         res = input()
         res = int(res)
 
+        # Evaluating the input of the menu.
+
+
         if res == 1:
             try:
                 ps.open()
+                os.system('cls')
                 print("Turning on")
                 
             except Exception as e:
                 print(f"Exception: {e}")
                 pass
-            # os.system("clear")
-
         elif res == 2:
             try:
                 ps.close()
+                os.system('cls')
                 print("Turning off")
             except Exception as e:
                 print(f"Exception: {e}")
                 pass
-            # os.system("clear")
         elif res == 3:
+            os.system('cls')
             print("Power cycle")
             delay = int(input("Enter delay in seconds: "))
             power_cycle(ps, delay)
         else:
             print("Ending program")
             return
+              
+def main(): 
+    # TODO:  
+    file = ""
 
+    init_wb()
 
-def can_test(delay):
-    can.rc['interface'] = 'serial'
-    can.rc['channel'] = '/dev/ttyUSB0'
-    can.rc['bitrate'] = 9600
-
-    from can.interface import Bus
-
-    bus = Bus()
-
-    
+    run_test()
 
 
 
-# ps_fun_time(15)
-# can_test(15)
-input_mode()
+if __name__ == "__main__":
+    main()

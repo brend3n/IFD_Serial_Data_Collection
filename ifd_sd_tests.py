@@ -142,7 +142,7 @@ def loop():
         time.sleep(3)
 
 # Works for testing
-def power_cycle(ps, time_delay):
+def power_cycle(ps, time_delay, file):
     init_wb()
     iteration = 0
     while True:
@@ -163,7 +163,7 @@ def power_cycle(ps, time_delay):
         assert_test(iteration, file)
         iteration += 1
 
-def run_test():
+def run_test(file):
 
     # Initiate the connection to the port for Power Supply    
     ps = serial.Serial(
@@ -218,18 +218,16 @@ def run_test():
             os.system('cls')
             print("Power cycle")
             delay = int(input("Enter delay in seconds: "))
-            power_cycle(ps, delay)
+            power_cycle(ps, delay, file)
         else:
             print("Ending program")
             return
               
 def main(): 
-    # TODO:  
+    # TODO: Need to figure output file name and extension
     file = ""
-
     init_wb()
-
-    run_test()
+    run_test(file)
 
 
 
